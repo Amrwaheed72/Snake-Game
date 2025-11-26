@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Trophy, RefreshCcw, Play, Pause } from "lucide-react";
+import { Trophy, RefreshCcw, Play } from "lucide-react";
 
-// --- Constants & Types ---
-const GRID_SIZE = 60; // 20x20 Grid
-const INITIAL_SPEED = 150; // ms
-const SPEED_INCREMENT = 2; // Speed up slightly every food
+const GRID_SIZE = 20;
+const INITIAL_SPEED = 150;
+const SPEED_INCREMENT = 2;
 
 type Point = { x: number; y: number };
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
+type newFood = { x: number; y: number };
 
 const INITIAL_SNAKE: Point[] = [
   { x: 10, y: 10 },
@@ -19,7 +19,6 @@ const INITIAL_SNAKE: Point[] = [
 const INITIAL_DIRECTION: Direction = "UP";
 
 export default function SnakeGame() {
-  // --- State ---
   const [snake, setSnake] = useState<Point[]>(INITIAL_SNAKE);
   const [food, setFood] = useState<Point>({ x: 5, y: 5 });
   const [direction, setDirection] = useState<Direction>(INITIAL_DIRECTION);
@@ -31,8 +30,6 @@ export default function SnakeGame() {
 
   // Ref to track the "current" direction to prevent double-moves in one tick
   const currentDirRef = useRef<Direction>(INITIAL_DIRECTION);
-
-  // --- Effects ---
 
   // Load High Score
   useEffect(() => {
@@ -50,7 +47,7 @@ export default function SnakeGame() {
 
   // Generate Food (Prevent spawning on snake)
   const generateFood = useCallback((): Point => {
-    let newFood;
+    let newFood: newFood;
     let isOnSnake;
     do {
       newFood = {
@@ -256,6 +253,7 @@ export default function SnakeGame() {
             <p className="text-slate-300 mb-6">Final Score: {score}</p>
             <button
               onClick={resetGame}
+              title="try again"
               className="flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all hover:scale-105 active:scale-95"
             >
               <RefreshCcw size={20} /> Try Again
@@ -271,6 +269,8 @@ export default function SnakeGame() {
                 {score === 0 ? "Ready?" : "Paused"}
               </p>
               <button
+                type="button"
+                title="play"
                 onClick={() => setIsPaused(false)}
                 className="flex items-center justify-center w-16 h-16 bg-emerald-500 text-white rounded-full hover:bg-emerald-400 transition-all shadow-lg hover:shadow-emerald-500/20 hover:scale-110 active:scale-95 mx-auto"
               >
@@ -285,7 +285,7 @@ export default function SnakeGame() {
       </div>
 
       {/* Controls Hint */}
-      <div className="mt-8 flex gap-4 text-slate-500 text-sm">
+      <div className="mt-8 flex gap-4 text-slate-300 text-sm">
         <div className="flex items-center gap-2">
           <span className="px-2 py-1 bg-slate-800 rounded border border-slate-700 font-mono text-xs">
             Space
