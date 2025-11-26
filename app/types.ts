@@ -3,30 +3,35 @@ import { Dispatch, SetStateAction, MutableRefObject } from "react";
 export type Point = { x: number; y: number };
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
-// بنعرف نوع دالة الـ Setter عشان نستخدمه تحت بسهولة
 type SetState<T> = Dispatch<SetStateAction<T>>;
 
 export interface GameLoopProps {
-  generateFood: () => Point; // كانت void وده غلط، هي بترجع Point
+  generateFood: () => Point;
   gameOver: boolean;
   isPaused: boolean;
   INITIAL_DIRECTION: Direction;
-  snake: Point[]; // الـ State نفسها
-  setSnake: SetState<Point[]>; // دالة تغيير الـ State
+  snake: Point[];
+  setSnake: SetState<Point[]>;
   GRID_SIZE: number;
   food: Point;
   setFood: SetState<Point>;
   setScore: SetState<number>;
   setSpeed: SetState<number>;
-  currentDirRef: MutableRefObject<Direction>; // Ref Object
+  currentDirRef: MutableRefObject<Direction>;
   speed: number;
   setGameOver: SetState<boolean>;
-  setIsPaused: SetState<boolean>; // كنت ناسي تضيف دي
+  setIsPaused: SetState<boolean>;
 }
 
 export interface KeyboardControlProps {
   setIsPaused: SetState<boolean>;
   gameOver: boolean;
-  setDirection: SetState<Direction>; // بنستقبل دالة التغيير هنا
+  setDirection: SetState<Direction>;
   currentDirRef: MutableRefObject<Direction>;
+}
+
+export interface MobileDirectionsProps {
+  currentDirRef: MutableRefObject<Direction>;
+  setDirection: SetState<Direction>;
+  setIsPaused: SetState<boolean>;
 }
