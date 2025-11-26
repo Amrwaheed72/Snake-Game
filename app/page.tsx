@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { Trophy, RefreshCcw, Play } from "lucide-react";
+import useLoadHighScore from "./hooks/useLoadHighScore";
+import useUpdateHighScore from "./hooks/useUpdateHighScore";
+import useGenerateFood from "./hooks/useGenerateFood";
+import { Direction, Point } from "./types";
+import useGameLoop from "./hooks/useGameLoop";
+import useKeyboardControls from "./hooks/useKeyboardControls";
 
 const GRID_SIZE = 20;
 const INITIAL_SPEED = 150;
-const SPEED_INCREMENT = 2;
-
-type Point = { x: number; y: number };
-type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
-type newFood = { x: number; y: number };
-
 const INITIAL_SNAKE: Point[] = [
   { x: 10, y: 10 },
   { x: 10, y: 11 },
@@ -21,155 +21,41 @@ const INITIAL_DIRECTION: Direction = "UP";
 export default function SnakeGame() {
   const [snake, setSnake] = useState<Point[]>(INITIAL_SNAKE);
   const [food, setFood] = useState<Point>({ x: 5, y: 5 });
-  const [direction, setDirection] = useState<Direction>(INITIAL_DIRECTION);
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [speed, setSpeed] = useState(INITIAL_SPEED);
 
-  // Ref to track the "current" direction to prevent double-moves in one tick
   const currentDirRef = useRef<Direction>(INITIAL_DIRECTION);
 
-  // Load High Score
-  useEffect(() => {
-    const saved = localStorage.getItem("snakeHighScore");
-    if (saved) setHighScore(parseInt(saved));
-  }, []);
+  const { highScore, setHighScore } = useLoadHighScore();
+  const { score, setScore } = useUpdateHighScore(highScore, setHighScore);
+  const { generateFood } = useGenerateFood(GRID_SIZE, snake);
 
-  // Update High Score
-  useEffect(() => {
-    if (score > highScore) {
-      setHighScore(score);
-      localStorage.setItem("snakeHighScore", score.toString());
-    }
-  }, [score, highScore]);
+  const { setDirection } = useGameLoop({
+    generateFood,
+    gameOver,
+    isPaused,
+    INITIAL_DIRECTION,
+    speed,
+    snake,
+    setSnake,
+    GRID_SIZE,
+    food,
+    setFood,
+    setGameOver,
+    setIsPaused,
+    setScore,
+    setSpeed,
+    currentDirRef,
+  });
 
-  // Generate Food (Prevent spawning on snake)
-  const generateFood = useCallback((): Point => {
-    let newFood: newFood;
-    let isOnSnake;
-    do {
-      newFood = {
-        x: Math.floor(Math.random() * GRID_SIZE),
-        y: Math.floor(Math.random() * GRID_SIZE),
-      };
-      // Check if new food is on snake body
-      // eslint-disable-next-line no-loop-func
-      isOnSnake = snake.some(
-        (segment) => segment.x === newFood.x && segment.y === newFood.y
-      );
-    } while (isOnSnake);
-    return newFood;
-  }, [snake]);
+  useKeyboardControls({
+    setIsPaused,
+    gameOver,
+    setDirection,
+    currentDirRef,
+  });
 
-  // Game Loop
-  useEffect(() => {
-    if (gameOver || isPaused) return;
-
-    const moveSnake = setInterval(() => {
-      setSnake((prevSnake) => {
-        const head = prevSnake[0];
-        const newHead = { ...head };
-
-        // Move Head
-        switch (direction) {
-          case "UP":
-            newHead.y -= 1;
-            break;
-          case "DOWN":
-            newHead.y += 1;
-            break;
-          case "LEFT":
-            newHead.x -= 1;
-            break;
-          case "RIGHT":
-            newHead.x += 1;
-            break;
-        }
-
-        // Check Collision (Walls)
-        if (
-          newHead.x < 0 ||
-          newHead.x >= GRID_SIZE ||
-          newHead.y < 0 ||
-          newHead.y >= GRID_SIZE
-        ) {
-          setGameOver(true);
-          return prevSnake;
-        }
-
-        // Check Collision (Self)
-        if (
-          prevSnake.some((seg) => seg.x === newHead.x && seg.y === newHead.y)
-        ) {
-          setGameOver(true);
-          return prevSnake;
-        }
-
-        const newSnake = [newHead, ...prevSnake];
-
-        // Check Food
-        if (newHead.x === food.x && newHead.y === food.y) {
-          setScore((s) => s + 10);
-          setSpeed((s) => Math.max(50, s - SPEED_INCREMENT)); // Increase speed
-          setFood(generateFood());
-          // Don't pop the tail, so snake grows
-        } else {
-          newSnake.pop(); // Remove tail
-        }
-
-        // Update Ref for next move validation
-        currentDirRef.current = direction;
-
-        return newSnake;
-      });
-    }, speed);
-
-    return () => clearInterval(moveSnake);
-  }, [direction, gameOver, isPaused, food, generateFood, speed]);
-
-  // Keyboard Controls
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (gameOver) return;
-
-      // Toggle Pause with Space
-      if (e.code === "Space") {
-        setIsPaused((prev) => !prev);
-        return;
-      }
-
-      const key = e.key;
-      // Current direction from REF to prevent 180-degree turns in same tick
-      const currentDir = currentDirRef.current;
-
-      if ((key === "ArrowUp" || key === "w") && currentDir !== "DOWN") {
-        setDirection("UP");
-        setIsPaused(false);
-      } else if ((key === "ArrowDown" || key === "s") && currentDir !== "UP") {
-        setDirection("DOWN");
-        setIsPaused(false);
-      } else if (
-        (key === "ArrowLeft" || key === "a") &&
-        currentDir !== "RIGHT"
-      ) {
-        setDirection("LEFT");
-        setIsPaused(false);
-      } else if (
-        (key === "ArrowRight" || key === "d") &&
-        currentDir !== "LEFT"
-      ) {
-        setDirection("RIGHT");
-        setIsPaused(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [gameOver]);
-
-  // Restart Handler
   const resetGame = () => {
     setSnake(INITIAL_SNAKE);
     setDirection("UP");
@@ -178,7 +64,7 @@ export default function SnakeGame() {
     setGameOver(false);
     setIsPaused(true);
     setSpeed(INITIAL_SPEED);
-    setFood({ x: 5, y: 5 }); // Reset food purely for clean restart
+    setFood({ x: 5, y: 5 });
   };
 
   return (
@@ -201,45 +87,68 @@ export default function SnakeGame() {
 
       {/* Game Board Container */}
       <div className="relative group">
-        {/* The Grid */}
+        {/* The Game Area */}
         <div
-          className="grid bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700"
+          className="relative bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700"
           style={{
-            gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
-            gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
             width: "min(90vw, 400px)",
             height: "min(90vw, 400px)",
           }}
         >
-          {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
-            const x = index % GRID_SIZE;
-            const y = Math.floor(index / GRID_SIZE);
+          {/* 1. Background Grid (Just for visuals) */}
+          <div
+            className="absolute inset-0 grid"
+            style={{
+              gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+              gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
+            }}
+          >
+            {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => (
+              <div
+                key={i}
+                className="border-[0.5px] border-slate-700/20 w-full h-full"
+              />
+            ))}
+          </div>
 
-            const isSnakeHead = snake[0].x === x && snake[0].y === y;
-            const isSnakeBody = snake.some(
-              (s, i) => i !== 0 && s.x === x && s.y === y
-            );
-            const isFood = food.x === x && food.y === y;
+          {/* 2. Food */}
+          <div
+            className="absolute bg-red-500 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse z-10"
+            style={{
+              width: "5%", // 100 / 20 = 5%
+              height: "5%",
+              left: `${food.x * 5}%`,
+              top: `${food.y * 5}%`,
+              transition: "all 0.2s ease-out",
+            }}
+          />
 
+          {/* 3. Snake */}
+          {snake.map((segment, index) => {
+            const isHead = index === 0;
             return (
-              <div key={index} className="relative w-full h-full">
-                {/* Snake Body */}
-                {isSnakeBody && (
-                  <div className="absolute inset-0.5 bg-emerald-500 rounded-sm opacity-80" />
-                )}
-
-                {/* Snake Head */}
-                {isSnakeHead && (
-                  <div className="absolute inset-0 bg-emerald-400 rounded-md shadow-[0_0_10px_rgba(52,211,153,0.5)] z-10">
-                    {/* Eyes */}
+              <div
+                key={index} // استخدام index هنا مهم عشان الـ transition يشتغل بسلاسة بين القطع
+                className={`absolute rounded-sm transition-all linear ${
+                  isHead ? "z-20" : "z-10"
+                }`}
+                style={{
+                  width: "5%",
+                  height: "5%",
+                  left: `${segment.x * 5}%`,
+                  top: `${segment.y * 5}%`,
+                  backgroundColor: isHead ? "#34d399" : "#10b981",
+                  opacity: isHead ? 1 : 0.9,
+                  // بنخلي مدة الحركة نفس سرعة اللعبة بالظبط عشان ميبقاش فيه تقطيع
+                  transitionDuration: `${speed}ms`,
+                }}
+              >
+                {/* Eyes for the head */}
+                {isHead && (
+                  <div className="relative w-full h-full">
                     <div className="absolute top-1 left-1 w-1.5 h-1.5 bg-slate-900 rounded-full" />
                     <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-slate-900 rounded-full" />
                   </div>
-                )}
-
-                {/* Food */}
-                {isFood && (
-                  <div className="absolute inset-1 bg-red-500 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse" />
                 )}
               </div>
             );
@@ -248,12 +157,11 @@ export default function SnakeGame() {
 
         {/* Overlay: Game Over */}
         {gameOver && (
-          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-lg z-20">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-lg z-30">
             <h2 className="text-4xl font-black text-red-500 mb-2">GAME OVER</h2>
             <p className="text-slate-300 mb-6">Final Score: {score}</p>
             <button
               onClick={resetGame}
-              title="try again"
               className="flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition-all hover:scale-105 active:scale-95"
             >
               <RefreshCcw size={20} /> Try Again
@@ -263,14 +171,14 @@ export default function SnakeGame() {
 
         {/* Overlay: Paused / Start */}
         {isPaused && !gameOver && (
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-lg z-20">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-lg z-30">
             <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl text-center">
               <p className="text-slate-400 mb-4 text-sm uppercase tracking-widest font-bold">
                 {score === 0 ? "Ready?" : "Paused"}
               </p>
               <button
-                type="button"
                 title="play"
+                type="button"
                 onClick={() => setIsPaused(false)}
                 className="flex items-center justify-center w-16 h-16 bg-emerald-500 text-white rounded-full hover:bg-emerald-400 transition-all shadow-lg hover:shadow-emerald-500/20 hover:scale-110 active:scale-95 mx-auto"
               >
