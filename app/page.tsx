@@ -8,7 +8,12 @@ import useGenerateFood from "./hooks/useGenerateFood";
 import { Direction, Point } from "./types";
 import useGameLoop from "./hooks/useGameLoop";
 import useKeyboardControls from "./hooks/useKeyboardControls";
-
+import {
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 const GRID_SIZE = 20;
 const INITIAL_SPEED = 150;
 const INITIAL_SNAKE: Point[] = [
@@ -139,7 +144,6 @@ export default function SnakeGame() {
                   top: `${segment.y * 5}%`,
                   backgroundColor: isHead ? "#34d399" : "#10b981",
                   opacity: isHead ? 1 : 0.9,
-                  // بنخلي مدة الحركة نفس سرعة اللعبة بالظبط عشان ميبقاش فيه تقطيع
                   transitionDuration: `${speed}ms`,
                 }}
               >
@@ -191,7 +195,53 @@ export default function SnakeGame() {
           </div>
         )}
       </div>
-
+      {/* --- Mobile Controls (Visible only on mobile) --- */}
+      <div className="grid grid-cols-3 gap-2 mt-6 md:hidden">
+        {/* الصف الأول: زرار فوق في النص */}
+        <div /> {/* مكان فاضي */}
+        <button
+          title="up"
+          className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center shadow-lg active:bg-slate-700 active:scale-95 transition-all border border-slate-700"
+          onClick={() => {
+            if (currentDirRef.current !== "DOWN") setDirection("UP");
+            setIsPaused(false);
+          }}
+        >
+          <ChevronUp size={30} className="text-emerald-400" />
+        </button>
+        <div /> {/* مكان فاضي */}
+        {/* الصف الثاني: شمال - تحت - يمين */}
+        <button
+          title="left"
+          className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center shadow-lg active:bg-slate-700 active:scale-95 transition-all border border-slate-700"
+          onClick={() => {
+            if (currentDirRef.current !== "RIGHT") setDirection("LEFT");
+            setIsPaused(false);
+          }}
+        >
+          <ChevronLeft size={30} className="text-emerald-400" />
+        </button>
+        <button
+          title="down"
+          className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center shadow-lg active:bg-slate-700 active:scale-95 transition-all border border-slate-700"
+          onClick={() => {
+            if (currentDirRef.current !== "UP") setDirection("DOWN");
+            setIsPaused(false);
+          }}
+        >
+          <ChevronDown size={30} className="text-emerald-400" />
+        </button>
+        <button
+          title="right"
+          className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center shadow-lg active:bg-slate-700 active:scale-95 transition-all border border-slate-700"
+          onClick={() => {
+            if (currentDirRef.current !== "LEFT") setDirection("RIGHT");
+            setIsPaused(false);
+          }}
+        >
+          <ChevronRight size={30} className="text-emerald-400" />
+        </button>
+      </div>
       {/* Controls Hint */}
       <div className="mt-8 flex gap-4 text-slate-300 text-sm">
         <div className="flex items-center gap-2">
