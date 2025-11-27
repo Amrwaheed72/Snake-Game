@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Direction, GameLoopProps } from "../types";
 
 const useGameLoop = ({
@@ -15,36 +15,53 @@ const useGameLoop = ({
   currentDirRef,
   speed,
   setGameOver,
-}: Omit<GameLoopProps, "direction" | "setDirection">) => {
+}: GameLoopProps) => {
+  currentDirRef.current ||= INITIAL_DIRECTION;
 
-  const [direction, setDirection] = useState<Direction>(INITIAL_DIRECTION);
   const SPEED_INCREMENT = 2;
+
+  const nextDirectionRef = useRef<Direction>(INITIAL_DIRECTION);
+
+  const setDirection = (dir: Direction) => {
+    const current = currentDirRef.current;
+    if (
+      (current === "UP" && dir === "DOWN") ||
+      (current === "DOWN" && dir === "UP") ||
+      (current === "LEFT" && dir === "RIGHT") ||
+      (current === "RIGHT" && dir === "LEFT")
+    )
+      return;
+
+    nextDirectionRef.current = dir;
+  };
 
   useEffect(() => {
     if (gameOver || isPaused) return;
 
     const moveSnake = setInterval(() => {
       setSnake((prevSnake) => {
+        const direction = nextDirectionRef.current;
+        currentDirRef.current = direction;
+
         const head = prevSnake[0];
         const newHead = { ...head };
 
-        // Move Head
         switch (direction) {
           case "UP":
-            newHead.y -= 1;
+            newHead.y--;
             break;
           case "DOWN":
-            newHead.y += 1;
+            newHead.y++;
             break;
           case "LEFT":
-            newHead.x -= 1;
+            newHead.x--;
             break;
           case "RIGHT":
-            newHead.x += 1;
+            newHead.x++;
             break;
         }
 
-        // Check Collision (Walls)
+        // Wall collision
         if (
           newHead.x < 0 ||
           newHead.x >= GRID_SIZE ||
@@ -55,7 +72,7 @@ const useGameLoop = ({
           return prevSnake;
         }
 
-        // Check Collision (Self)
+        // Self collision
         if (
           prevSnake.some((seg) => seg.x === newHead.x && seg.y === newHead.y)
         ) {
@@ -65,7 +82,7 @@ const useGameLoop = ({
 
         const newSnake = [newHead, ...prevSnake];
 
-        // Check Food
+        // Food collision
         if (newHead.x === food.x && newHead.y === food.y) {
           setScore((s) => s + 10);
           setSpeed((s) => Math.max(50, s - SPEED_INCREMENT));
@@ -74,14 +91,12 @@ const useGameLoop = ({
           newSnake.pop();
         }
 
-        currentDirRef.current = direction;
         return newSnake;
       });
     }, speed);
 
     return () => clearInterval(moveSnake);
   }, [
-    direction,
     gameOver,
     isPaused,
     food,
@@ -92,8 +107,8 @@ const useGameLoop = ({
     setFood,
     setGameOver,
     setSpeed,
-    currentDirRef,
     GRID_SIZE,
+    currentDirRef,
   ]);
 
   return { setDirection };

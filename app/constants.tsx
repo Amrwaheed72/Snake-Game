@@ -4,7 +4,13 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-export const directionBtns = [
+import { Direction } from "./types";
+import { JSX } from "react";
+export const directionBtns: ReadonlyArray<{
+  direction: Direction;
+  notEqual: Direction;
+  icon: JSX.Element;
+}> = [
   {
     direction: "UP",
     notEqual: "DOWN",

@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { UseUpdateHighScoreProps } from "../types";
 
-const useLoadHighScore = () => {
-  const [highScore, setHighScore] = useState(0);
-
+const useUpdateHighScore = ({
+  score,
+  highScore,
+  setHighScore,
+}: UseUpdateHighScoreProps): void => {
   useEffect(() => {
-    const saved = localStorage.getItem("snakeHighScore");
-    if (saved) {
-      setHighScore(parseInt(saved));
+    if (score > highScore) {
+      setHighScore(score);
+      localStorage.setItem("snakeHighScore", score.toString());
     }
-  }, []);
-  return { highScore, setHighScore };
+  }, [score, highScore, setHighScore]);
 };
 
-export default useLoadHighScore;
+export default useUpdateHighScore;

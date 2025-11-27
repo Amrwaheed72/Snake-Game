@@ -1,18 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-const useUpdateHighScore = (
-  highScore: number,
-  setHighScore: (state: number) => void
-) => {
-  const [score, setScore] = useState(0);
+interface UseUpdateHighScoreProps {
+  score: number;
+  highScore: number;
+  setHighScore: React.Dispatch<React.SetStateAction<number>>;
+}
 
+const useUpdateHighScore = ({
+  score,
+  highScore,
+  setHighScore,
+}: UseUpdateHighScoreProps): void => {
   useEffect(() => {
     if (score > highScore) {
       setHighScore(score);
       localStorage.setItem("snakeHighScore", score.toString());
     }
   }, [score, highScore, setHighScore]);
-  return { score, setScore };
 };
 
 export default useUpdateHighScore;

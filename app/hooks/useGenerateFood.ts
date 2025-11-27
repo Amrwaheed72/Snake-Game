@@ -1,21 +1,20 @@
 import { useCallback } from "react";
-import { Point } from "../types";
+import { Point, Snake } from "../types";
 
-const useGenerateFood = (GRID_SIZE: number, snake: Point[]) => {
-  const generateFood = useCallback((): Point => {
+const useGenerateFood = (GRID_SIZE: number, snake: Snake) => {
+  const generateFood = useCallback<() => Point>(() => {
     let newFood: Point;
-    let isOnSnake;
+
     do {
       newFood = {
         x: Math.floor(Math.random() * GRID_SIZE),
         y: Math.floor(Math.random() * GRID_SIZE),
       };
-      isOnSnake = snake.some(
-        (segment) => segment.x === newFood.x && segment.y === newFood.y
-      );
-    } while (isOnSnake);
+    } while (snake.some((seg) => seg.x === newFood.x && seg.y === newFood.y));
+
     return newFood;
   }, [snake, GRID_SIZE]);
+
   return { generateFood };
 };
 

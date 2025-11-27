@@ -8,10 +8,10 @@ import useGenerateFood from "./hooks/useGenerateFood";
 import { Direction, Point } from "./types";
 import useGameLoop from "./hooks/useGameLoop";
 import useKeyboardControls from "./hooks/useKeyboardControls";
-
 import MobileDirections from "./components/MobileDirections";
 import PauseStart from "./components/PauseStart";
 import Snake from "./components/Snake";
+import useSetLevel from "./hooks/useSetLevel";
 const GRID_SIZE = 20;
 const INITIAL_SPEED = 150;
 const INITIAL_SNAKE: Point[] = [
@@ -27,11 +27,14 @@ export default function SnakeGame() {
   const [gameOver, setGameOver] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [speed, setSpeed] = useState(INITIAL_SPEED);
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [level, setLevel] = useState(1);
 
   const currentDirRef = useRef<Direction>(INITIAL_DIRECTION);
 
-  const { highScore, setHighScore } = useLoadHighScore();
-  const { score, setScore } = useUpdateHighScore(highScore, setHighScore);
+  useLoadHighScore({ score, highScore, setHighScore });
+  useUpdateHighScore({ score, highScore, setHighScore });
   const { generateFood } = useGenerateFood(GRID_SIZE, snake);
 
   const { setDirection } = useGameLoop({
@@ -46,7 +49,6 @@ export default function SnakeGame() {
     food,
     setFood,
     setGameOver,
-    setIsPaused,
     setScore,
     setSpeed,
     currentDirRef,
@@ -58,6 +60,7 @@ export default function SnakeGame() {
     setDirection,
     currentDirRef,
   });
+  useSetLevel({ level, setLevel, setSpeed, score });
 
   const resetGame = () => {
     setSnake(INITIAL_SNAKE);
@@ -69,7 +72,6 @@ export default function SnakeGame() {
     setSpeed(INITIAL_SPEED);
     setFood({ x: 5, y: 5 });
   };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white font-sans p-4">
       <div className="w-full max-w-md flex justify-between items-center mb-6 bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700">
@@ -78,6 +80,12 @@ export default function SnakeGame() {
             Score
           </span>
           <span className="text-2xl font-bold text-emerald-400">{score}</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+            Level
+          </span>
+          <span className="text-2xl font-bold text-cyan-400">{level}</span>
         </div>
         <div className="flex flex-col items-end">
           <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
@@ -92,7 +100,7 @@ export default function SnakeGame() {
           className="relative bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700"
           style={{
             width: "min(100vw, 400px)",
-            height: "min(100vw, 400px)",  
+            height: "min(100vw, 400px)",
           }}
         >
           <div

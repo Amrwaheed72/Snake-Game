@@ -42,7 +42,7 @@ const useKeyboardControls = ({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [gameOver]);
+  }, [gameOver, currentDirRef, setDirection, setIsPaused]);
 };
 
 export default useKeyboardControls;
