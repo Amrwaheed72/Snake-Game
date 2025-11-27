@@ -10,6 +10,7 @@ A modern, feature-rich implementation of the classic Snake game built with Next.
 ## ✨ Features
 
 ### 🎮 Core Gameplay
+
 - **Classic Snake Mechanics** - Navigate the snake to eat food and grow longer
 - **Progressive Difficulty** - Game speed increases as you level up
 - **High Score Tracking** - Persistent high score saved in localStorage
@@ -20,6 +21,7 @@ A modern, feature-rich implementation of the classic Snake game built with Next.
   - 🐌 **Slow Motion** - Slow down time by 50%
 
 ### 🎨 Visual & Audio
+
 - **4 Beautiful Themes**
   - 🌙 Classic Dark
   - 🌊 Ocean Blue
@@ -30,6 +32,7 @@ A modern, feature-rich implementation of the classic Snake game built with Next.
 - **Responsive Design** - Works perfectly on desktop and mobile devices
 
 ### ⚙️ Settings & Customization
+
 - **Grid Size Configuration** - Adjustable from 10x10 to 30x30
 - **Difficulty Levels** - Easy, Medium, Hard presets
 - **Theme Switcher** - Change themes on the fly
@@ -37,6 +40,7 @@ A modern, feature-rich implementation of the classic Snake game built with Next.
 - **Mobile Controls** - Touch-friendly directional buttons
 
 ### 📊 Statistics Tracking
+
 - Games Played
 - Best Score
 - Average Score
@@ -44,6 +48,7 @@ A modern, feature-rich implementation of the classic Snake game built with Next.
 - Best Streak
 
 ### 🛡️ Robustness & Quality
+
 - **Error Boundaries** - Dual-layer error handling for graceful failures
 - **Input Validation** - Comprehensive validation system (233 lines of validators!)
 - **Safe Storage** - localStorage with memory fallback
@@ -54,6 +59,7 @@ A modern, feature-rich implementation of the classic Snake game built with Next.
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 20+ or Bun
 - npm, yarn, pnpm, or bun
 
@@ -100,15 +106,18 @@ npm run start
 ## 🎮 How to Play
 
 ### Desktop Controls
+
 - **Arrow Keys** (↑ ↓ ← →) - Move the snake
 - **Space** - Pause/Resume game
 - **Settings Icon** (top right) - Open settings menu
 
 ### Mobile Controls
+
 - **Directional Buttons** - On-screen buttons to move the snake
 - **Center Button** - Pause/Resume game
 
 ### Objective
+
 1. Guide your snake to eat the red food
 2. Each food eaten increases your score and length
 3. Collect power-ups when they appear (every 50 points)
@@ -118,6 +127,7 @@ npm run start
 ## 🏗️ Architecture
 
 ### Project Structure
+
 ```
 app/
 ├── components/        # React components
@@ -176,6 +186,7 @@ app/
 ## 🎨 Themes
 
 Each theme provides a complete color palette:
+
 - Background colors
 - Grid and UI elements
 - Snake colors (body and head)
@@ -187,6 +198,7 @@ Themes can be changed in the settings menu without losing game progress.
 ## 🔊 Sound Effects
 
 The game uses the Web Audio API to generate synthetic sound effects:
+
 - **Eat Sound** - Short beep when consuming food
 - **Level Up** - Ascending chime when reaching new level
 - **Game Over** - Descending tone when game ends
@@ -197,6 +209,7 @@ All sounds can be toggled in the settings menu.
 ## 📱 Responsive Design
 
 The game adapts to different screen sizes:
+
 - **Desktop**: Keyboard controls with visual hints
 - **Mobile**: Touch-friendly on-screen controls
 - **Tablet**: Optimized for both orientations
@@ -204,6 +217,7 @@ The game adapts to different screen sizes:
 ## 🧪 Validation & Error Handling
 
 The game includes extensive validation:
+
 - Point boundary checking
 - Snake self-collision detection
 - Food position validation
@@ -221,14 +235,6 @@ The game includes extensive validation:
 - ✅ React Compiler enabled
 - ✅ Next.js automatic code splitting
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
 ## 🙏 Acknowledgments
 
 - Built with modern React patterns and best practices
@@ -237,7 +243,7 @@ This project is open source and available under the MIT License.
 
 ## 📞 Contact
 
-Created with ❤️ by [Your Name]
+Created By Amr Waheed
 
 ---
 

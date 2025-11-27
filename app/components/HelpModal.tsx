@@ -57,11 +57,11 @@ const HelpModal = ({ isOpen, onClose, theme }: HelpModalProps) => {
                     <section>
                         <h3 className="font-bold text-lg mb-2">Keyboard Shortcuts</h3>
                         <div className="grid grid-cols-2 gap-2">
-                            <div className="flex items-center gap-2 bg-white/5 p-2 rounded">
+                            <div className="flex items-center gap-2  bg-white/5 p-2 rounded">
                                 <ArrowUp size={16} />
                                 <span className="text-sm">Arrow Keys - Move</span>
                             </div>
-                            <div className="flex items-center gap-2 bg-white/5 p-2 rounded">
+                            <div className="flex items-center gap-2 flex-wrap bg-white/5 p-2 rounded">
                                 <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Space</kbd>
                                 <span className="text-sm">Pause/Resume</span>
                             </div>
