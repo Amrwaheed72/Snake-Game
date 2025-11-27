@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import  { Component, ErrorInfo, ReactNode } from "react";
 import { Bug, RefreshCcw, Home } from "lucide-react";
 
 interface Props {
@@ -11,10 +11,6 @@ interface State {
   errorCount: number;
 }
 
-/**
- * Game-specific error boundary with auto-recovery
- * Attempts to reset the game state instead of showing error screen
- */
 class GameErrorBoundary extends Component<Props, State> {
   private resetTimeout: NodeJS.Timeout | null = null;
 
@@ -37,7 +33,6 @@ class GameErrorBoundary extends Component<Props, State> {
       errorCount: prev.errorCount + 1,
     }));
 
-    // Auto-recovery for first few errors
     if (this.state.errorCount < 3) {
       console.log("Attempting auto-recovery...");
       this.resetTimeout = setTimeout(() => {
@@ -60,7 +55,6 @@ class GameErrorBoundary extends Component<Props, State> {
   };
 
   handleHardReset = () => {
-    // Clear all state and reload
     window.location.reload();
   };
 

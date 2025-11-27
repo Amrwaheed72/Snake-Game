@@ -28,7 +28,6 @@ const useGameLoop = ({
   const nextDirectionRef = useRef<Direction>(INITIAL_DIRECTION);
 
   const setDirection = (dir: Direction) => {
-    // Validate direction input
     if (!isValidDirection(dir)) {
       console.error("Invalid direction:", dir);
       return;
@@ -36,7 +35,6 @@ const useGameLoop = ({
 
     const current = currentDirRef.current;
 
-    // Validate direction change
     if (!isValidDirectionChange(current, dir)) {
       return;
     }
@@ -47,10 +45,9 @@ const useGameLoop = ({
   useEffect(() => {
     if (gameOver || isPaused) return;
 
-    // Validate speed before starting interval
     if (speed < 50 || speed > 500) {
       console.error("Invalid speed:", speed);
-      setSpeed(150); // Reset to default
+      setSpeed(150); 
       return;
     }
 

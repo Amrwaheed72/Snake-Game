@@ -23,7 +23,6 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
     return {
       hasError: true,
       error,
@@ -32,12 +31,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to console in development
     console.error("Error caught by boundary:", error, errorInfo);
-
-    // You can also log to an error reporting service here
-    // logErrorToService(error, errorInfo);
-
     this.setState({
       error,
       errorInfo,
@@ -54,12 +48,9 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }
-
-      // Default error UI
       return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white p-4">
           <div className="max-w-md w-full bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl p-8">
@@ -75,8 +66,6 @@ class ErrorBoundary extends Component<Props, State> {
               The game encountered an unexpected error. Don&apos;t worry, your
               progress is safe!
             </p>
-
-            {/* Show error details in development */}
             {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mb-6 bg-slate-900 rounded-lg p-4 text-xs">
                 <summary className="cursor-pointer text-red-400 font-mono mb-2">

@@ -45,3 +45,49 @@ export interface UseUpdateHighScoreProps {
   highScore: number;
   setHighScore: SetState<number>;
 }
+
+export type GameTheme = 'classic' | 'ocean' | 'neon' | 'forest' | 'highcontrast';
+
+export interface Theme {
+  name: string;
+  colors: {
+    background: string;
+    grid: string;
+    snake: string;
+    snakeHead: string;
+    food: string;
+    foodGlow: string;
+    scoreText: string;
+    cardBg: string;
+    cardBorder: string;
+    buttonBg: string;
+    buttonHover: string;
+    accentPrimary: string;
+    accentSecondary: string;
+  };
+}
+
+export type PowerUpType = 'speed' | 'multiplier' | 'invincible' | 'slow';
+
+export interface PowerUp {
+  type: PowerUpType;
+  position: Point;
+  duration: number;
+  active: boolean;
+}
+
+export interface GameSettings {
+  gridSize: number;
+  initialSpeed: number;
+  theme: GameTheme;
+  soundEnabled: boolean;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
+export interface GameStats {
+  gamesPlayed: number;
+  totalScore: number;
+  bestScore: number;
+  bestStreak: number;
+  totalPlayTime: number;
+}
