@@ -25,7 +25,7 @@ const ScorePanel = ({
 }: ScorePanelProps) => {
     return (
         <div
-            className="w-full max-w-md flex justify-between items-center mb-6 rounded-xl shadow-lg p-4 transition-all duration-500"
+            className="w-full mt-24 md:mt-0 max-w-md flex justify-between items-center mb-6 rounded-xl shadow-lg p-4 transition-all duration-500"
             style={{
                 backgroundColor: theme.colors.cardBg,
                 borderColor: theme.colors.cardBorder,
