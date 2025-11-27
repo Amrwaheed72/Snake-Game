@@ -29,15 +29,12 @@ import useSetLevel from "./hooks/useSetLevel";
 import ErrorBoundary from "./components/ErrorBoundary";
 import GameErrorBoundary from "./components/GameErrorBoundary";
 import {
-  isValidGridSize,
-  isValidSpeed,
   validateGameState,
   sanitizeScore,
   sanitizeSpeed,
 } from "./utils/validators";
 import { getTheme } from "./constants/themes";
 import {
-  vibrateShort,
   vibrateMedium,
   vibrateLong,
   vibrateLevelUp,
@@ -106,7 +103,6 @@ function SnakeGameContent() {
     clearPowerUps,
     getScoreMultiplier,
     getSpeedModifier,
-    isInvincible,
   } = usePowerUps({ gridSize: GRID_SIZE, snake, score });
 
   // Update high score when score changes
